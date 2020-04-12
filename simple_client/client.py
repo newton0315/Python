@@ -2,7 +2,7 @@
 
 import socket
 
-HOST, PORT = '127.0.0.1', 1400
+HOST, PORT = '192.168.0.101', 1400
 
 s = socket.socket(
 
@@ -22,8 +22,13 @@ s = socket.socket(
 )
 s.connect((HOST, PORT))
 
-s.send('Hello World'.encode('ascii'))#in UDP use sendto()
-data = s.recv(1024)#in UDP use recvfrom()
+while True:
+	message = input("Any string (<1024 bytes): ")
+	if message == 'Q' or message == 'q':
+		print("Closing connection. Bye~")
+		break;
+	s.send(message.encode('utf-8'))#in UDP use sendto()
+	data = s.recv(1024)#in UDP use recvfrom()
+	print(repr(data.decode('utf-8')))
 
 s.close()#end the connection
-print(repr(data.decode('ascii')))
