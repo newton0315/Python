@@ -1,8 +1,7 @@
+#!/usr/bin/env python3
+
 import http.server
 import socketserver
-
-with open('data.txt', 'r') as f:
-	line = f.readline()
 
 handler = http.server.SimpleHTTPRequestHandler
 

@@ -5,6 +5,9 @@
 - features: Display **`date/language/Add new message`**
 - architecture
 - required skills
+- simple http server can't change index.html, so **cron job** will be used to update the file
+  - `crontab -e`
+  - `0 6,12 * * * /home/newton.lee/work/github/pyal/simple_client/motd/motd.py`
 
 ### How-to:
 - Run **`server.py`** first.
