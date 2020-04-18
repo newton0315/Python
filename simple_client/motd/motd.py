@@ -2,8 +2,14 @@
 
 import random
 import time
+import http.server
+import socketserver
 
-DATAFILE = 'data.txt'
+import threading
+
+handler = http.server.SimpleHTTPRequestHandler
+
+DATAFILE = 'data.ko'
 INDEXTEMPLATE = "index.template"
 INDEXFILE = "index.html"
 MOTD_MESSAGE = "MOTD_MESSAGE"
@@ -41,15 +47,16 @@ class MotdBook():
         datestr = time.strftime('%Y-%m-%d %a', time.localtime(time.time()))
         return datestr
 
-def make_page(filename):
-    motdbook = MotdBook(filename)
-    message, author = motdbook.getmotd()
-
-    try:
-        fin = open(INDEXTEMPLATE, 'r')
-        # nested 'try' does not seem to work
-        #try:
-        with open(INDEXFILE, 'w') as fout:
+def make_page(book):
+    while True:
+        message, author = book.getmotd()
+#        print("new message:" + message, "new author:" + author)
+    
+        try:
+            fin = open(INDEXTEMPLATE, 'r')
+            # nested 'try' does not seem to work
+            #try:
+            fout = open(INDEXFILE, 'w')
             while True:
                 line = fin.readline()
                 if not line:
@@ -57,18 +64,30 @@ def make_page(filename):
                 newline = line.replace(MOTD_MESSAGE, message)
                 newline2 = newline.replace(MOTD_AUTHOR, author)
                 fout.write(newline2)
-    except Exception:
-        print('Can not open input file: ' + INDEXTEMPLATE)
-
+            fout.close()
+            fin.close()
+        except Exception:
+            print('Can not open input file: ' + INDEXTEMPLATE)
+        time.sleep(60)
+'''
 if __name__ == '__main__':
-    """
     motdbook = MotdBook(DATAFILE)
-    message, author = motdbook.getmotd()
+    while True:
+        ts = threading.Thread(target=make_page, args=(motdbook,))
+        ts.start()
+        time.sleep(5)
     #print('MOTD (', end='')
-    print(motdbook.getdate()) #+')')
-    print()
-    print(message)
-    print('-', author) # , This is weird.. '-')
-    #del motdbook
-    """
-    make_page(DATAFILE)
+    #print(motdbook.getdate()) #+')')
+    #print()
+    #print(message)
+    #print('-', author) # , This is weird.. '-')
+'''
+
+with socketserver.TCPServer(('', 10001), handler) as httpd:
+    motdbook = MotdBook(DATAFILE)
+    ts = threading.Thread(target=make_page, args=(motdbook,))
+    ts.start()
+
+    print('Server listening on port 10001...')
+    httpd.serve_forever()
+

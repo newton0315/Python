@@ -90,3 +90,6 @@ ENV/
 .ropeproject
 .idea
 .DS_Store
+
+# index.html generated
+index.html
