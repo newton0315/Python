@@ -9,7 +9,7 @@ import threading
 
 handler = http.server.SimpleHTTPRequestHandler
 
-DATAFILE = 'data.ko'
+DATAFILE = 'data.txt'
 INDEXTEMPLATE = "index.template"
 INDEXFILE = "index.html"
 MOTD_MESSAGE = "MOTD_MESSAGE"
@@ -20,7 +20,7 @@ class MotdBook():
         self.debug = False
         self.book = []
         self.lines = 0
-        with open(filename, 'r') as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             while True:
                 line = f.readline()
                 if not line:
@@ -56,7 +56,7 @@ def make_page(book):
             fin = open(INDEXTEMPLATE, 'r')
             # nested 'try' does not seem to work
             #try:
-            fout = open(INDEXFILE, 'w')
+            fout = open(INDEXFILE, 'w', encoding='utf-8')
             while True:
                 line = fin.readline()
                 if not line:
