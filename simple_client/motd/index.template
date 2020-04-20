@@ -3,7 +3,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head>
 <body>
-<h3> MOTD_MESSAGE </h3>
-<h4> - MOTD_AUTHOR </h4>
+<h2> MOTD_MESSAGE </h2>
+<h3> - MOTD_AUTHOR </h3>
 </body>
 </html>
