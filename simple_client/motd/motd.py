@@ -47,11 +47,42 @@ class MotdBook():
         datestr = time.strftime('%Y-%m-%d %a', time.localtime(time.time()))
         return datestr
 
-def make_page(book):
+class QuizBook(MotdBook):
+    def __init__(self, filename):
+        self.debug = False
+        self.book = []
+        self.lines = 0
+        with open(filename, 'r', encoding='utf-8') as f:
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                if  len(line.strip()) > 0 and line == '==':
+                    self.book.append(line)
+                if self.debug:
+                    print("count:%d line:%s" % (self.lines, line))
+            f.close()
+
+    def getmotd(self):
+        # Is this the best place to start randomize?
+        random.seed(time.time())
+        index = random.randint(0, self.lines - 1)
+        if self.debug:
+            print("lines:%d index:%d" % (self.lines, index))
+        message, author = self.book[index].split('|')
+        message.strip()
+        author.strip()
+        return message, author
+
+    def getdate(self):
+        datestr = time.strftime('%Y-%m-%d %a', time.localtime(time.time()))
+        return datestr
+
+def make_motd_page(book):
     while True:
         message, author = book.getmotd()
 #        print("new message:" + message, "new author:" + author)
-    
+
         try:
             fin = open(INDEXTEMPLATE, 'r')
             # nested 'try' does not seem to work
@@ -85,9 +116,7 @@ if __name__ == '__main__':
 
 with socketserver.TCPServer(('', 10001), handler) as httpd:
     motdbook = MotdBook(DATAFILE)
-    ts = threading.Thread(target=make_page, args=(motdbook,))
+    ts = threading.Thread(target=make_motd_page, args=(motdbook,))
     ts.start()
-
     print('Server listening on port 10001...')
     httpd.serve_forever()
-
